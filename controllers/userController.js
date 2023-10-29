@@ -1,5 +1,5 @@
+/* eslint-disable no-unused-vars */
 const User = require("../models/user");
-const Comments = require("../models/comments");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
@@ -28,14 +28,13 @@ exports.sign_up_post =
             .escape(),
         asyncHandler(async (req, res, next) => {
             bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-                if (err) { return next(err)};
+                if (err) { return next(err)}
                 const errors = validationResult(req);
                 const user = new User({
                     first_name: req.body.first_name,
                     last_name: req.body.last_name,
                     username: req.body.username,
                     password: hashedPassword,
-                    member_status: false,
                     admin: false
                 })
         
@@ -54,13 +53,3 @@ exports.sign_up_post =
             })
         })
     ];
-
-// exports.log_in_get = asyncHandler(async (req, res, next) => {
-//     if (req.isAuthenticated()) {
-//         console.log('auth success')
-//         res.json(req.user)
-//     } else {
-//         console.log('auth no success')
-//         res.json(1)
-//     }
-// });

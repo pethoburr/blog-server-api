@@ -6,7 +6,6 @@ const { body, validationResult } = require("express-validator");
 exports.list = asyncHandler(async (req, res, next) => {
     const topics = await Topics.find().exec()
     const posts = await Posts.find().populate('topic').exec()
-    console.log('topics')
     res.json({topics, posts});
 });
 
@@ -89,7 +88,7 @@ exports.topic_get = asyncHandler(async (req, res, next) => {
     const topic = await Topics.findById(req.params.id).exec();
     const allPosts = await Posts.find().populate('topics').exec();
     for (let i = 0; i < allPosts.length; i++) {
-        if (allPosts[i].topic === topic) {
+        if (allPosts[i].topic._id.toString() === topic._id.toString()) {
             relevantPosts.push(allPosts[i]);
         }
     }
