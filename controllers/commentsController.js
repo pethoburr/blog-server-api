@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const Posts = require("../models/posts");
 const Comment = require("../models/comments");
 const asyncHandler = require("express-async-handler");
@@ -94,5 +95,9 @@ exports.delete_get = asyncHandler(async (req, res, next) => {
 
 exports.delete_post = asyncHandler(async (req, res, next) => {
     await Comment.findByIdAndRemove(req.body.commentId);
+    await Posts.updateOne(
+        { _id: req.params.id },
+        { $pull: { comments: req.body.commentId } },
+    )
     res.json({ status: 'success'});
 });
