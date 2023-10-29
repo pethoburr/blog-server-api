@@ -16,7 +16,7 @@ exports.latest = asyncHandler(async (req, res, next) => {
 })
 
 exports.list_all = asyncHandler(async (req, res, next) => {
-    const posts = await Posts.find().populate('topic').populate('comment').exec()
+    const posts = await Posts.find().populate('topic').populate('comments').exec()
     res.json(posts)
 })
 
@@ -48,7 +48,7 @@ exports.create_post = [
         .trim()
         .isLength({ min: 1 })
         .escape(),
-    body("published", "if not published post will be saved in database")
+    body("published", "need to specify whether to publish or just store in database")
         .trim()
         .isBoolean()
         .escape(),
@@ -95,13 +95,17 @@ exports.update = [
         .trim()
         .isLength({ min: 1})
         .escape(),
+    body("published", "need to specify whether to publish or just store in database")
+        .trim()
+        .isBoolean()
+        .escape(),
     asyncHandler(async (req, res, next) => {
          const errors = validationResult(req);
          const post = new Posts({
             title: req.body.title,
             text: req.body.text,
             topic: req.body.topic,
-            published: true,
+            published: req.body.published,
             _id: req.params.id
          });
 
@@ -116,6 +120,6 @@ exports.update = [
 ];
 
 exports.delete = asyncHandler(async (req, res, next) => {
-    await Posts.findByIdAndRemove(req.params.id);
-    res.redirect('/posts');
+   const deleted = await Posts.findByIdAndRemove(req.params.id);
+   res.json(deleted);
 });
