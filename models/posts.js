@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 
 const PostsSchema = new Schema({
     title: { type: String, required: true},
+    author: { type: Schema.Types.ObjectId, ref: "User", required: true},
     text: { type: String, required: true},
     time: { type: Date },
     topic: { type: Schema.Types.ObjectId, ref: "Topics", required: true},

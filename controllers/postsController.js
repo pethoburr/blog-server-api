@@ -56,7 +56,9 @@ exports.create_post = [
         const errors = validationResult(req);
         const post = new Posts({
             title: req.body.title,
+            author: req.body.author,
             text: req.body.text,
+            time: req.body.time,
             topic: req.body.topic,
             published: req.body.published
         })
@@ -103,7 +105,9 @@ exports.update = [
          const errors = validationResult(req);
          const post = new Posts({
             title: req.body.title,
+            author: req.body.author,
             text: req.body.text,
+            time: req.body.time,
             topic: req.body.topic,
             published: req.body.published,
             _id: req.params.id

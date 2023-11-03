@@ -51,7 +51,7 @@ router.post('/admin/log-in', (req, res, next) => {
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err)}
     if (!user.admin) {
-      return res.redirect('http://localhost:3000/admin/log-in')
+      return res.redirect('/admin/log-in')
     }
     const userId = user._id.toString()
     const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30})
@@ -67,7 +67,7 @@ router.post('/log-in', function(req, res, next) {
         if (err) { return next(err)}
         if (!user) {
             console.log('fail')
-            return res.redirect('http://localhost:5173/log-in')
+            return res.redirect('/log-in')
         }
         const userId = user._id.toString()
         const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30 })
