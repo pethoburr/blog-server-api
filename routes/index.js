@@ -9,6 +9,8 @@ const topics_controller = require("../controllers/topicsController");
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
 
+// flyctl: C:\Users\mpaha\.fly\bin\flyctl.exe
+
 router.get('/', posts_controller.latest);
 
 router.get('/posts', passport.authenticate('jwt', {session: false}), posts_controller.list);

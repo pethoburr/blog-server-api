@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const Topics = require("../models/topics");
 const Posts = require("../models/posts");
 const asyncHandler = require("express-async-handler");
@@ -69,13 +70,15 @@ exports.update = [
 ];
 
 exports.delete_post = asyncHandler(async (req, res, next) => {
+    console.log('here')
     const [posts, topic] = await Promise.all([
         Posts.find({ topic: req.params.id}).exec(),
         Topics.findById(req.params.id).exec()
     ])
-
+    console.log('here')
+    console.log(posts)
     if (posts.length > 0) {
-        res.status(500);
+        res.status(500).json({ message: 'need to delete all posts before you can delete topic'});
         return;
     } else {
         await Topics.findByIdAndRemove(req.params.id);
@@ -84,13 +87,7 @@ exports.delete_post = asyncHandler(async (req, res, next) => {
 })
 
 exports.topic_get = asyncHandler(async (req, res, next) => {
-    let relevantPosts = [];
     const topic = await Topics.findById(req.params.id).exec();
-    const allPosts = await Posts.find().populate('topics').exec();
-    for (let i = 0; i < allPosts.length; i++) {
-        if (allPosts[i].topic._id.toString() === topic._id.toString()) {
-            relevantPosts.push(allPosts[i]);
-        }
-    }
+    const relevantPosts = await Posts.find({ topic:  req.params.id }).exec();
     res.json({topic, relevantPosts});
 });
