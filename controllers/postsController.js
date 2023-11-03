@@ -53,10 +53,16 @@ exports.create_post = [
         .isBoolean()
         .escape(),
     asyncHandler(async (req, res, next) => {
-        const errors = validationResult(req);
+        console.log('here')
+        const errors = validationResult(req)
+        const bearerHeader = req.headers.authorization
+        const bearer = bearerHeader.split(' ')
+        const token = bearer[1]
+        const decoded = jwt.verify(token, process.env.SECRET)
+        const userId = decoded.id
         const post = new Posts({
             title: req.body.title,
-            author: req.body.author,
+            author: userId,
             text: req.body.text,
             time: req.body.time,
             topic: req.body.topic,
@@ -103,16 +109,21 @@ exports.update = [
         .escape(),
     asyncHandler(async (req, res, next) => {
          const errors = validationResult(req);
+         const bearerHeader = req.headers.authorization
+         const bearer = bearerHeader.split(' ')
+         const token = bearer[1]
+         const decoded = jwt.verify(token, process.env.SECRET)
+         const userId = decoded.id
          const post = new Posts({
             title: req.body.title,
-            author: req.body.author,
+            author: userId,
             text: req.body.text,
             time: req.body.time,
             topic: req.body.topic,
             published: req.body.published,
             _id: req.params.id
          });
-
+         console.log('here')
          if (!errors.isEmpty()) {
             const oldPost = await Posts.findById(req.params.id).populate('topic').exec();
             res.status(500).json(oldPost);
