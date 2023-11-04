@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const PostsSchema = new Schema({
     title: { type: String, required: true},
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true},
+    author: { type: String, required: true},
     text: { type: String, required: true},
     time: { type: Date },
     topic: { type: Schema.Types.ObjectId, ref: "Topics", required: true},
@@ -18,7 +18,7 @@ PostsSchema.virtual("url").get(function() {
 })
 
 PostsSchema.virtual("date").get(function() {
-    return DateTime.fromJSDate(this.time).toLocaleString(DateTime.DATE_MED)
+    return DateTime.fromMillis(Date.parse(this.time)).toLocaleString(DateTime.DATE_MED)
 })
 
 module.exports = mongoose.model("Posts", PostsSchema);
