@@ -40,7 +40,7 @@ exports.list_all = asyncHandler(async (req, res, next) => {
                 comments: ting.comments
         })
     })
-    res.json(posts)
+    res.json(formatted)
 })
 
 exports.list = asyncHandler(async (req, res, next) => {
