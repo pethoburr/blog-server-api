@@ -61,8 +61,7 @@ exports.create_post = [
         .escape(),
     body("text", "must enter text")
         .trim()
-        .isLength({ min: 1 })
-        .escape(),
+        .isLength({ min: 1 }),
     body("topic", "must enter topic")
         .trim()
         .isLength({ min: 1 })
@@ -119,8 +118,7 @@ exports.update = [
         .escape(),
     body("text", "must enter text")
         .trim()
-        .isLength({ min: 1})
-        .escape(),
+        .isLength({ min: 1}),
     body("topic", "must enter topic")
         .trim()
         .isLength({ min: 1})
