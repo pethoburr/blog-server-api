@@ -26,7 +26,20 @@ exports.latest = asyncHandler(async (req, res, next) => {
 })
 
 exports.list_all = asyncHandler(async (req, res, next) => {
+    const formatted = []
     const posts = await Posts.find().populate('topic').populate('comments').exec()
+    posts.map((ting) => {
+        formatted.push({
+            _id: ting._id,
+                title: ting.title,
+                author: ting.author,
+                text: ting.text,
+                time: ting.date,
+                topic: ting.topic,
+                published: ting.published,
+                comments: ting.comments
+        })
+    })
     res.json(posts)
 })
 
