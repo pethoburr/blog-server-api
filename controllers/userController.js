@@ -39,16 +39,16 @@ exports.sign_up_post =
                 })
         
                 if (!errors.isEmpty()) {
-                    res.status(500);
+                    res.status(500).json(errors);
                     return;
                 } else {
                     const checker = await User.findOne({ username: req.body.username }).exec();
                     if (checker) {
-                        res.status(500);
+                        res.status(500).json({ message: 'Username already in use'});
                         return;
                     }
                     await user.save();
-                    res.redirect('http://localhost:5173/log-in')
+                    res.redirect('https://apex-predators.netlify.app/log-in')
                 }
             })
         })

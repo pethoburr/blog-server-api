@@ -66,8 +66,8 @@ router.post('/log-in', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
         if (err) { return next(err)}
         if (!user) {
-            console.log('fail')
-            return res.redirect('/log-in')
+          console.log(info)
+            return res.status(400).json(info)
         }
         const userId = user._id.toString()
         const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30 })
