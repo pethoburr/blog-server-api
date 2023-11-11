@@ -28,7 +28,10 @@ exports.sign_up_post =
             .escape(),
         asyncHandler(async (req, res, next) => {
             bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-                if (err) { return next(err)}
+                if (err) {
+                    console.log('ye here') 
+                    return next(err)
+                }
                 const errors = validationResult(req);
                 const user = new User({
                     first_name: req.body.first_name,
@@ -39,7 +42,8 @@ exports.sign_up_post =
                 })
         
                 if (!errors.isEmpty()) {
-                    res.status(500).json(errors);
+                    console.log('uhm here')
+                    res.status(400).json(errors.array());
                     return;
                 } else {
                     const checker = await User.findOne({ username: req.body.username }).exec();
@@ -48,7 +52,7 @@ exports.sign_up_post =
                         return;
                     }
                     await user.save();
-                    res.redirect('https://apex-predators.netlify.app/log-in')
+                    res.status(200).json(user)
                 }
             })
         })
