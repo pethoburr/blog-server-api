@@ -107,7 +107,6 @@ exports.create_post = [
             return;
         } else {
             post.save();
-            const dt = post.date
             res.json(post);
         }
     })
@@ -117,11 +116,26 @@ exports.post_get = asyncHandler(async (req, res, next) => {
     const post = await Posts.findById(req.params.id).populate('topic').populate([{ path: 'comments', populate: [{ path: 'sender'}]}]).exec();
     const bearerHeader = req.headers.authorization
     const comments = post.comments
+    const copy = comments
+    const formatted = []
+    copy.map((cmnt) => {
+        console.log(cmnt.date)
+        formatted.push({
+            _id: cmnt._id,
+            time: cmnt.date,
+            text: cmnt.text,
+            sender: cmnt.sender,
+            __v: cmnt.__v
+        })
+    })
+    console.log(formatted)
+    console.log('cmnts:')
+    console.log(comments)
     const bearer = bearerHeader.split(' ')
     const token = bearer[1]
     const decoded = jwt.verify(token, process.env.SECRET)
     const userId = decoded.id
-    res.json({ post, userId, comments });
+    res.json({ post, userId, formatted });
 });
 
 exports.update = [

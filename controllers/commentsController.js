@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Posts = require("../models/posts");
+const User = require("../models/user")
 const Comment = require("../models/comments");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
@@ -38,7 +39,17 @@ exports.add_post =
                 } else {
                     await comment.save();
                     const updatedPost = await Posts.findOneAndUpdate({ _id: req.params.id}, { $push: { comments: comment}}, { new: true })
-                    return res.json({ comment, updatedPost });
+                    const commenter = await User.findById(decoded.id).exec()
+                    const newComment = {
+                        _id: comment._id,
+                        time: comment.date,
+                        text: comment.text,
+                        sender: {
+                            username: commenter.username
+                        }
+                    }
+                    console.log(newComment)
+                    return res.json({ newComment, updatedPost });
                 }
             })
     ];
