@@ -27,7 +27,8 @@ exports.latest = asyncHandler(async (req, res, next) => {
 
 exports.list_all = asyncHandler(async (req, res, next) => {
     const formatted = []
-    const posts = await Posts.find().populate('topic').populate('comments').exec()
+    const posts = await Posts.find().populate('topic').populate('comments').populate({ path: 'comments', populate: { path: 'sender', select: 'username'}}).exec()
+    console.log(posts[0].comments)
     posts.map((ting) => {
         formatted.push({
             _id: ting._id,
