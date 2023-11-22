@@ -39,6 +39,8 @@ router.route('/sign-up').get(user_controller.sign_up_get).post(user_controller.s
 
 // router.get('/log-in', user_controller.log_in_get);
 
+router.get('/comments/id', comment_controller.user_id)
+
 router.post('/posts/:id/comments/:commentsId/delete', comment_controller.delete_post);
 
 router.route('/posts/:id/comments/:commentsId/update').get(comment_controller.update_get).post(comment_controller.update_post);
@@ -49,9 +51,11 @@ router.post('/posts/:id/comments/add', comment_controller.add_post);
 
 router.post('/admin/log-in', (req, res, next) => {
   passport.authenticate('local', function (err, user, info) {
-    if (err) { return next(err)}
+    if (err) { 
+      return next(err)
+    }
     if (!user.admin) {
-      return res.redirect('/admin/log-in')
+      return res.json("Must be admin user")
     }
     const userId = user._id.toString()
     const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30})

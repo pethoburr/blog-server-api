@@ -112,3 +112,12 @@ exports.delete_post = asyncHandler(async (req, res, next) => {
     )
     res.json({ status: 'success'});
 });
+
+exports.user_id = asyncHandler(async (req, res, next) => {
+    const bearerHeader = req.headers.authorization
+    const bearer = bearerHeader.split(' ')
+    const token = bearer[1]
+    const decoded = jwt.verify(token, process.env.SECRET)
+    const userId = decoded.id
+    res.json(userId)
+})
