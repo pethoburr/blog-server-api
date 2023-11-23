@@ -55,7 +55,10 @@ router.post('/admin/log-in', (req, res, next) => {
       return next(err)
     }
     if (!user.admin) {
-      return res.json("Must be admin user")
+      if (info === undefined) {
+        return res.json("Must be admin user")
+      }
+      return res.json(info)
     }
     const userId = user._id.toString()
     const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30})
