@@ -45,6 +45,7 @@ exports.add_post =
                         time: comment.date,
                         text: comment.text,
                         sender: {
+                            _id: comment.sender._id,
                             username: commenter.username
                         }
                     }
