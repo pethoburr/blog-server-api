@@ -11,13 +11,11 @@ const { mainModule } = require('process');
 require('dotenv').config();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-// const session = require('express-session');
 const User = require('./models/user');
 const bcrypt = require('bcryptjs');
 const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
-// const MongoDBStore = require('connect-mongodb-session')(session);
 
 var app = express();
 
@@ -58,41 +56,16 @@ passport.use(new JWTStrategy({
   }
 }))
 
-// passport.serializeUser((user, done) => {
-//   done(null, user.id);
-// });
-
-// passport.deserializeUser(async (id, done) => {
-// try {
-//   const user = await User.findById(id);
-//   done(null, user);
-// } catch(err) {
-//   done(err);
-// };
-// });
-
-// const store = new MongoDBStore({
-//   uri: process.env.MONGODB_URI, collection: 'mySessions'
-// })
-
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(cors());
 app.use(cookieParser());
-//app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
+app.use(cors());
 app.use(passport.initialize());
-// app.use(passport.session());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
-
-// app.use((req, res, next) => {
-//   res.locals.currentUser = req.user;
-//   next();
-// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

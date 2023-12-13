@@ -87,7 +87,20 @@ exports.delete_post = asyncHandler(async (req, res, next) => {
 })
 
 exports.topic_get = asyncHandler(async (req, res, next) => {
+    const formatted = []
     const topic = await Topics.findById(req.params.id).exec();
     const relevantPosts = await Posts.find({ topic:  req.params.id }).exec();
-    res.json({topic, relevantPosts});
+    relevantPosts.map((ting) => {
+        formatted.push({
+            _id: ting._id,
+                title: ting.title,
+                author: ting.author,
+                text: ting.text,
+                time: ting.date,
+                topic: ting.topic,
+                published: ting.published,
+                comments: ting.comments
+        })
+    })
+    res.json({topic, formatted});
 });

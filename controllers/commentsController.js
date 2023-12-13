@@ -20,13 +20,12 @@ exports.add_post =
             .isLength({ min: 1 })
             .escape(),
         asyncHandler(async (req, res, next) => {
+                console.log(req.cookies)
                 const errors = validationResult(req);
-                const cook = req.cookies.token
-                console.log('cook')
-                console.log(cook)
                 const bearerHeader = req.headers.authorization
                 const bearer = bearerHeader.split(' ')
                 const token = bearer[1]
+               
                 const decoded = jwt.verify(token, process.env.SECRET)
                 const comment = new Comment({
                     time: Date.now(),
@@ -49,7 +48,6 @@ exports.add_post =
                             username: commenter.username
                         }
                     }
-                    console.log(newComment)
                     return res.json({ newComment, updatedPost });
                 }
             })

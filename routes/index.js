@@ -37,7 +37,6 @@ router.post('/topics/:id/delete', topics_controller.delete_post);
 
 router.route('/sign-up').get(user_controller.sign_up_get).post(user_controller.sign_up_post);
 
-// router.get('/log-in', user_controller.log_in_get);
 
 router.get('/comments/id', comment_controller.user_id)
 
@@ -46,8 +45,6 @@ router.post('/posts/:id/comments/:commentsId/delete', comment_controller.delete_
 router.route('/posts/:id/comments/:commentsId/update').get(comment_controller.update_get).post(comment_controller.update_post);
 
 router.post('/posts/:id/comments/add', comment_controller.add_post);
-
-// router.post('/post/:id/comments', comment_controller.posts_comments)
 
 router.post('/admin/log-in', (req, res, next) => {
   passport.authenticate('local', function (err, user, info) {
@@ -60,7 +57,7 @@ router.post('/admin/log-in', (req, res, next) => {
       }
       return res.json(info)
     }
-    const userId = user._id.toString()
+    const userId = user._id.toString() 
     const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30})
     return res
       .cookie('token', token, { httpOnly: true, secure: false, path: '/', sameSite: 'lax'})
@@ -74,23 +71,12 @@ router.post('/log-in', function(req, res, next) {
         if (err) { return next(err)}
         if (!user) {
           console.log(info)
-            return res.status(400).json(info)
+          return res.status(400).json(info)
         }
         const userId = user._id.toString()
-        const token = jwt.sign({ id: userId}, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 30 })
-        console.log('token below')
-        console.log(token)
-        return res
-            .cookie('token', token, { httpOnly: true, secure: false, path: '/', sameSite: 'lax'})
-            .status(200)
-            .json({ user, token})
+        const token = jwt.sign({ id: userId}, process.env.SECRET)
+        res.status(200).json({ user, token })
     })(req, res, next)
-});
-
-router.get('/log-out', (req, res, next) => {
-  console.log('logging out')
-  req.logout()
-  res.redirect('http://localhost:5173/')
 });
 
 module.exports = router;
