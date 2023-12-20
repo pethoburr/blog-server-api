@@ -2,30 +2,36 @@
 const index = require("./routes/index");
 const request = require("supertest");
 const express = require("express");
-const initializeMongoServer = require("./mongoConfigTesting")
-initializeMongoServer()
+const { initializeMongoServer, closeMongoServer } = require("./mongoConfigTesting")
 const app = express();
 
 
 app.use(express.urlencoded({ extended: false }));
 app.use("/", index);
 
-test("index route works", done => {
-  request(app)
-    .get("/")
-    .expect("Content-Type", /json/)
-    .expect([])
-    .expect(200, done);
-}, 30000);
+describe('API tests', () => {
+  
+  beforeAll(async () => {
+    serverInfo = await initializeMongoServer()
+  })
+  afterAll(async () => {
+    await closeMongoServer()
+  })
 
-test("testing route works", done => {
-  request(app)
-    .post("/test")
-    .type("form")
-    .send({ item: "hey" })
-    .then(() => {
-      request(app)
-        .get("/test")
-        .expect({ array: ["hey"] }, done);
-    });
-});
+  it("index route works", done => {
+    request(app)
+      .get("/")
+      .expect("Content-Type", /json/)
+      .expect([])
+      .expect(200, done);
+  }, 30000);
+
+  it("testing route works", done => {
+    request(app)
+      .post("/posts/create")
+      .type("form")
+      .send({ title: "hey", text: "wassup", topic: "random", published: false })
+      .expect({title: "hey", text: "wassup", topic: "random", published: false}, done)
+  });
+
+})

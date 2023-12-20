@@ -16,7 +16,6 @@ const bcrypt = require('bcryptjs');
 const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
-require('./mongoConfig')
 
 var app = express();
 
