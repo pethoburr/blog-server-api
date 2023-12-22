@@ -16,14 +16,15 @@ const bcrypt = require('bcryptjs');
 const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
+require('./mongoConfig')
 
 var app = express();
 
-async function main() {
-  await mongoose.connect(process.env.MONGODB_URI);
-}
+// async function main() {
+//   await mongoose.connect(process.env.MONGODB_URI);
+// }
 
-main().catch((err) => console.log(err));
+// main().catch((err) => console.log(err));
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
