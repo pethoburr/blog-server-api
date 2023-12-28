@@ -1,10 +1,11 @@
 /* eslint-disable no-undef */
 const index = require("./routes/index");
 const request = require("supertest");
+const expressTest = require('express')
 const express = require("express");
 const { initializeMongoServer, closeMongoServer } = require("./mongoConfigTesting")
 const mongoose = require('mongoose');
-const app = express();
+const app = expressTest();
 
 
 app.use(express.urlencoded({ extended: false }));
