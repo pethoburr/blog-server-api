@@ -1,51 +1,41 @@
 /* eslint-disable no-undef */
 const index = require("./routes/index");
 const request = require("supertest");
-const expressTest = require('express')
 const express = require("express");
 const { initializeMongoServer, closeMongoServer } = require("./mongoConfigTesting")
-const mongoose = require('mongoose');
-const app = expressTest();
+const app = express();
+const jwt = require('jsonwebtoken')
 
 
 app.use(express.urlencoded({ extended: false }));
 app.use("/", index);
 
-
-// const User = mongoose.model('User', new mongoose.Schema({
-//   username: String,
-//   password: String
-// }))
-
 describe('API tests', () => {
 
-  let token;
-  let UserModel;
+let token;
 
   beforeAll(async () => {
     serverInfo = await initializeMongoServer()
+    
+    await request(app)
+      .post('/sign-up')
+      .set('Content-type', 'application/json')
+      .send({ first_name: 'petho', last_name: 'burr', username: 'frigger', password: 'trigger', admin: true })
+      .then(res => {
+        console.log('signup:' + JSON.stringify(res.body))
+      })
 
-    const schema = new mongoose.Schema({
-      username: String,
-      password: String
-    })
-
-    UserModel = mongoose.model('UserModel', schema)
-
-    await UserModel.create({
-      username: 'frigger',
-      password: 'trigger'
-    })
-
-    const res = await request(app)
+    await request(app)
       .post('/log-in')
+      .set('Content-type', 'application/json')
       .send({
         username: 'frigger',
         password: 'trigger'
       })
-
-    token = res.headers.authorization
-    console.log(token)
+      .then(res => {
+        token = res.headers.authorization
+        console.log(`token: ${token}`)
+      })
   })
 
   afterAll(async () => {
@@ -61,14 +51,24 @@ describe('API tests', () => {
   }, 30000);
 
   it("testing route works",async () => {
+    const userId = '659cc1b00fd6226bd650bf5b'
+    const token = jwt.sign({ id: userId}, process.env.SECRET)
+    console.log('tok:' + token)
     const response = await request(app)
       .post("/posts/create")
-      .type("form")
       .set('Authorization', `Bearer ${token}`)
-      .set('Content-type', 'application/json')
+      .set('Content-Type', /json/)
       .send({ title: "hey", text: "wassup", topic: "random", published: false })
       .expect(200)
 
     expect(response.body).toEqual({title: "hey", text: "wassup", topic: "random", published: false })
   });
+
+  it('creates topic', done => {
+    request(app)
+      .post('/topics/create')
+      .send({ title: 'test', description: 'test topic'})
+      .expect('Content-Type', /json/)
+      .expect(200, done)
+  }, 30000)
 }) 

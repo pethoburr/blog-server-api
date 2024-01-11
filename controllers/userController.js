@@ -27,6 +27,7 @@ exports.sign_up_post =
             .isLength({ min: 1 })
             .escape(),
         asyncHandler(async (req, res, next) => {
+            console.log('req:' + JSON.stringify(req))
             bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
                 if (err) {
                     console.log('ye here') 
