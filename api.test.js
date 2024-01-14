@@ -35,6 +35,14 @@ describe('API tests', () => {
       .send(body)
     console.log(resp)
     expect(resp.statusCode).toBe(200)
-   
+  })
+
+  it('creates post', async () => {
+    const post = { }
+    const resp = await request(app)
+      .post('/posts/create')
+      .send(post)
+    console.log('post resp:' + resp)
+    expect(resp.statusCode).toBe(200)
   })
 }) 
