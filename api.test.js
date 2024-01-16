@@ -38,11 +38,20 @@ describe('API tests', () => {
   })
 
   it('creates post', async () => {
-    const post = { }
+    const post = { title: 'test post', author: 'tester', text: 'testing post route', topic: '123', published: true }
     const resp = await request(app)
       .post('/posts/create')
       .send(post)
     console.log('post resp:' + resp)
+    expect(resp.statusCode).toBe(200)
+  })
+
+  it('logs admin in', async () => {
+    const login = { username: 'frigger', password: 'trigger'}
+    const resp = await request(app)
+      .post('/admin/log-in')
+      .send(login)
+    console.log('admin login:' + JSON.stringify(resp))
     expect(resp.statusCode).toBe(200)
   })
 }) 
