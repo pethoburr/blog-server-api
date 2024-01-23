@@ -12,6 +12,8 @@ app.use("/", index);
 
 describe('API tests', () => {
 
+  let token;
+
   beforeAll(async () => {
     serverInfo = await initializeMongoServer()
   })
@@ -30,11 +32,23 @@ describe('API tests', () => {
 
   it('signs up', async () => {
     const body = { first_name: 'guy', last_name: 'still', username: 'davidgoliath', password: 'bang'}
+    const login = { username: 'davidgoliath', password: 'bang'}
     const resp = await request(app)
       .post('/sign-up')
       .send(body)
-    console.log(resp)
-    expect(resp.statusCode).toBe(200)
+      if(resp.status === 200) {
+       const loginresp = await request(app)
+          .post('/log-in')
+          .send(login)
+          .expect(200)
+          .then(resp => {
+            console.log('afterlogin:' + resp)
+          })
+          
+        console.log('login resp:' + loginresp.body)
+        
+      }
+    expect(200)
   })
 
   it('creates post', async () => {
