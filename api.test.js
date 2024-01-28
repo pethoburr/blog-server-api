@@ -53,6 +53,7 @@ app.use("/", index);
 describe('API tests', () => {
 
   let token;
+  let topicId;
 
   beforeAll(async () => {
     serverInfo = await initializeMongoServer()
@@ -104,8 +105,19 @@ describe('API tests', () => {
      }
   )
 
+  it('creates topic', async () => {
+    const topic = { title: 'test', description: 'test topic'}
+    const resp = await request(app)
+        .post('/topics/create')
+        .set('Authorization', `Bearer ${token}`)
+        .send(topic)
+      console.log(`topic response: ${resp.body._id}`)
+      topicId = resp.body._id
+      expect(resp.statusCode).toBe(200)
+  })
+
   it('creates post', async () => {
-    const post = { title: 'test post', author: 'tester', text: 'testing post route', topic: '123', published: true }
+    const post = { title: 'test post', author: 'tester', text: 'testing post route', topic: topicId, published: true }
     const resp = await request(app)
       .post('/posts/create')
       .set('Authorization', `Bearer ${token}`)
@@ -121,4 +133,5 @@ describe('API tests', () => {
     console.log('admin login:' + resp.body.token)
     expect(200)
   })
+
 }) 
