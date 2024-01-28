@@ -54,6 +54,7 @@ describe('API tests', () => {
 
   let token;
   let topicId;
+  let postId;
 
   beforeAll(async () => {
     serverInfo = await initializeMongoServer()
@@ -90,17 +91,15 @@ describe('API tests', () => {
 
   it('logs in', async () => {
     const login = { username: 'final', password: 'test'}
-    const loginresp = await request(app)
+    await request(app)
         .post('/log-in')
         .type('form')
         .set('Content-type', 'application/json')
         .set('Accept', 'application/json')
         .send(login)
         .then(resp => {
-          console.log('afterlogin:' + resp.body.token)
           token = resp.body.token
         })
-    console.log('loginresp:' + loginresp)
     expect(200) 
      }
   )
@@ -111,7 +110,6 @@ describe('API tests', () => {
         .post('/topics/create')
         .set('Authorization', `Bearer ${token}`)
         .send(topic)
-      console.log(`topic response: ${resp.body._id}`)
       topicId = resp.body._id
       expect(resp.statusCode).toBe(200)
   })
@@ -122,15 +120,75 @@ describe('API tests', () => {
       .post('/posts/create')
       .set('Authorization', `Bearer ${token}`)
       .send(post)
+    postId = resp.body._id
     expect(resp.statusCode).toBe(200)
   })
 
+  it('gets all topics', async () => {
+   await request(app)
+      .get("/topics")
+      .set('Authorization', `Bearer ${token}`)
+      .expect("Content-Type", /json/)
+      .expect(200);
+  })
+
+  it('gets all posts', async () => {
+    await request(app)
+       .get("/posts")
+       .set('Authorization', `Bearer ${token}`)
+       .expect("Content-Type", /json/)
+       .expect(200);
+   })
+
+   it('gets individual post', async () => {
+    await request(app)
+        .get(`/posts/${postId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect('Content-type', /json/)
+        .expect(200);
+   })
+
+   it('gets individual topic', async () => {
+    await request(app)
+        .get(`/topics/${topicId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect('Content-type', /json/)
+        .expect(200);
+   })
+
+   it('updates post', async () => {
+    const updatedPost = { title: 'updated test post', author: 'tester', text: 'updated testing post route', topic: topicId, published: true }
+    await request(app)
+        .post(`/posts/${postId}/update`)
+        .send(updatedPost)
+    expect(200)
+   })
+
+   it('updates topic', async () => {
+    const updatedTopic = { title: 'updated test', description: 'updated test topic'}
+    await request(app)
+        .post(`/topics/${topicId}/update`)
+        .send(updatedTopic)
+    expect(200)
+   })
+
+   it('deletes post', async () => {
+      await request(app)
+        .post(`/posts/${postId}/delete`)
+      expect(200)
+   })
+
+   it('deletes topic', async () => {
+    await request(app)
+      .post(`/topics/${topicId}/delete`)
+    expect(200)
+ })
+
   it('logs admin in', async () => {
     const login = { username: 'final', password: 'test'}
-    const resp = await request(app)
+    await request(app)
       .post('/admin/log-in')
       .send(login)
-    console.log('admin login:' + resp.body.token)
     expect(200)
   })
 
