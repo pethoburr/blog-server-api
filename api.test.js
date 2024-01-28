@@ -55,6 +55,7 @@ describe('API tests', () => {
   let token;
   let topicId;
   let postId;
+  let commentId;
 
   beforeAll(async () => {
     serverInfo = await initializeMongoServer()
@@ -124,6 +125,32 @@ describe('API tests', () => {
     expect(resp.statusCode).toBe(200)
   })
 
+  it('adds comment', async () => {
+    const comment = { text: 'test comment' }
+    const res = await request(app)
+      .post(`/posts/${postId}/comments/add`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(comment)
+    commentId = res.body.newComment._id
+    expect(200)
+   })
+
+   it('updates comment', async () => {
+    const updatedComment = { text: 'updated test comment'}
+    await request(app)
+      .post(`/posts/${postId}/comments/${commentId}/update`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(updatedComment)
+    expect(200)
+   })
+
+   it('delets comment', async () => {
+    await request(app)
+      .post(`/posts/${postId}/comments/${commentId}/delete`)
+      .send(commentId)
+    expect(200)
+   })
+
   it('gets all topics', async () => {
    await request(app)
       .get("/topics")
@@ -179,7 +206,7 @@ describe('API tests', () => {
    })
 
    it('deletes topic', async () => {
-    await request(app)
+   await request(app)
       .post(`/topics/${topicId}/delete`)
     expect(200)
  })
